@@ -1,82 +1,89 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Form, Input, Button, message } from "antd";
-import { Link, useNavigate } from 'react-router-dom';
-
-
-
+import { Link, useNavigate } from "react-router-dom";
+import { Select } from "antd";
 
 const Register = () => {
+  const [country, setCountry] = useState([]);
+  const [usercountry,setuserCountry] = useState();
 
-    const [email, setEmail] = useState();
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
-    const [cpassword, setCpassword] = useState();
-    const [countries, setCountries] = useState([]);
-    const navigate = useNavigate();
+    // ------------------ Load List of Countries ------------------
+    const url =
+    "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/countries?f=pjson";
+  useEffect(() => {
+    axios.get(url).then((res) => {
+      setCountry(res.data.countries);
+      console.log('countries',res.data.countries);
+    });
+  }, []);
 
 
-    const onChangeName = (e) => {
-      setUsername(e.target.value);
-    };
-    const onChangeEmail = (e) => {
-      setEmail(e.target.value);
-    };
+  const [email, setEmail] = useState();
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
+  const [cpassword, setCpassword] = useState();
+  const navigate = useNavigate();
 
-    const onChangePassword = (e) => {
-      setPassword(e.target.value);
-    };
-    const onChangeCpassword = (e) => {
-      setCpassword(e.target.value);
-    };
+  const onChangeName = (e) => {
+    setUsername(e.target.value);
+  };
+  const onChangeEmail = (e) => {
+    setEmail(e.target.value);
+  };
 
-    const success = () => {
-      message.success('Congrats, your registration is successful. Please login now!');
-    };
+  const onChangePassword = (e) => {
+    setPassword(e.target.value);
+  };
+  const onChangeCpassword = (e) => {
+    setCpassword(e.target.value);
+  };
 
-      //---------------REGISTRATION FORM SUBMIT HANDLER---------------
+  const selectCountry = (e) => {
+    setuserCountry(e);
+    console.log(e);
+  };
+
+  const success = () => {
+    message.success(
+      "Congrats, your registration is successful. Please login now!"
+    );
+  };
+
+  //---------------REGISTRATION FORM SUBMIT HANDLER---------------
 
   const onSubmit = (e) => {
+    console.log(e);
     let newData = {
       username: e.username,
       email: e.email,
-      mobile: e.mobile,
+      country: usercountry,
       password: e.password,
       cpassword: e.cpassword,
     };
     console.log(newData);
-    let newUser = localStorage.getItem('users');
+    let newUser = localStorage.getItem("users");
     if (!newUser) {
-      localStorage.setItem('users', JSON.stringify([newData]));
+      localStorage.setItem("users", JSON.stringify([newData]));
       success();
-      navigate('/login');
-    }
-    else{
+      navigate("/login");
+    } else {
       let userArr = JSON.parse(newUser);
-      
-      userArr.map(arr=>{
+
+      userArr.map((arr) => {
         userArr.push(newData);
-        localStorage.setItem('users', JSON.stringify(userArr));  
-      })
+        localStorage.setItem("users", JSON.stringify(userArr));
+      });
       success();
-      navigate('/login');
-      
+      navigate("/login");
     }
   };
 
 
-    // ------------------ Load List of Countries ------------------
-    const url ='https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/countries?f=pjson';
-    useEffect(()=>{
-        axios.get(url).then(res => {
-            setCountries(res.data.countries);
-            console.log(res.data.countries)
-          })
-        }, [])
 
-
-  return <div>
-          <h3>
+  return (
+    <div>
+      <h3>
         Do you have an account?
         <Link to={"/login"} className="nav-link">
           Login
@@ -102,6 +109,10 @@ const Register = () => {
               message: "Please enter your name",
             },
             { whitespace: true },
+            {
+              pattern: /^[a-zA-Z0-9]+$/,
+              message: "Username should not contain any special characters.",
+            },
             { min: 3, message: "Username must contain min 3 characters" },
           ]}
           hasFeedback
@@ -118,22 +129,27 @@ const Register = () => {
               required: true,
               message: "Please enter your Email ID",
             },
-            { type: "email", message: "Please enter a valid Email" },
+            {
+              pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+              message: "Please enter a valid Email",
+            },
           ]}
           hasFeedback
         >
-          <Form.Item>
-  {getFieldDecorator("email", {
-    rules: [
-      {
-        required: true,
-        type: "email",
-        message: "The input is not valid E-mail!",
-      },
-    ],
-  })(<Input placeholder="Email" />)}
-</Form.Item>;
-          <Input placeholder="Enter your Email ID" />
+          <Input placeholder="Enter your Email" />
+        </Form.Item>
+        <Form.Item>
+          <Select
+            placeholder="Please select your country"
+            onSelect={selectCountry}
+          >
+            {
+              country.map((country,index) => {
+                return (
+                <Select.Option key={index} value={country.name}>{country.name}</Select.Option>
+               );
+              })}
+          </Select>
         </Form.Item>
         <Form.Item
           label="Password"
@@ -149,11 +165,18 @@ const Register = () => {
               min: 6,
               message: "Min 6 characters required",
             },
+            {
+              max: 15,
+              message: "Max 15 characters only allowed",
+            },
           ]}
           hasFeedback
         >
           <Input.Password placeholder="Enter your Password" />
         </Form.Item>
+
+
+
         <Form.Item
           label="Confirm Password"
           name="cpassword"
@@ -185,9 +208,8 @@ const Register = () => {
           </Button>
         </Form.Item>
       </Form>
-
-
-  </div>;
+    </div>
+  );
 };
 
 export default Register;

@@ -37,11 +37,9 @@
   }
 }
 
-h3{
- font-family: 'Courier New', Courier, monospace;
+h3, h2, h4{
+ font-family: Georgia, 'Times New Roman', Times, serif ;
  text-align: center;
 }
-h4{
-  font-family: 'Courier New', Courier, monospace;
-  text-align: center;
-}
+
+Select.Option{align-items: center; }
