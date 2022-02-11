@@ -3,26 +3,25 @@ import { Link,  useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const _ = require("lodash");
-  const navigate = useNavigate();
 
   const onChangeEmail=(e)=>{
     setEmail(e.target.value)
-    console.log(email);
   }
   const onChangePassword=(e)=>{
     setPassword(e.target.value)
   }
 
-  //--------------- SUCCESS/ERROR MESSAGES ---------------
+  //--------------- SUCCESS / ERROR MESSAGES ---------------
 
   const error = () => {
     message.error("Wrong Credentials, Please try again!");
   };
   const success = () => {
-    message.success("Loggedin Successfully, Let's know the world better!");
+    message.success("Hey, Let's know the world better!");
   };
 
 
@@ -32,14 +31,13 @@ const Login = () => {
   let userData = localStorage.getItem("users");
   let usersArray = JSON.parse(userData);
 
-  let loggedUser = _.find(usersArray, function(obj) {  //lodash find to check if user exists
+  let loggedUser = _.find(usersArray, function(obj) {  //Check if user exists
     if (obj.email == e.email && obj.password == e.password) {
         return true;
     }
   });
-    console.log(loggedUser);
     if(loggedUser){
-      localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
+      localStorage.setItem('loggedUser', JSON.stringify(loggedUser));  //set loggedUser details
       success();
       navigate("/home");
     }else{
@@ -53,7 +51,9 @@ const Login = () => {
         align="left"
         src="https://media.istockphoto.com/photos/the-30-waving-flags-of-nato-countries-north-atlantic-treaty-isolated-picture-id1320096958?b=1&k=20&m=1320096958&s=170667a&w=0&h=fSwzXnCmXYwtcwNaszdoCDHnWlJ5vQcQKVtu3dUCzus="
       />
-      <h3>Country App Login</h3>
+      <h1 style={{ color: "#0b52bb"}}>
+                COUNTRY APP SIGN UP
+              </h1>
       <h4>
         New Here? Please <Link to={"/register"}>Sign Up!</Link>
       </h4>

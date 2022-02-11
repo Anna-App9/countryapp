@@ -37,9 +37,68 @@
   }
 }
 
-h3, h2, h4{
+h1, h2, h3, h4{
  font-family: Georgia, 'Times New Roman', Times, serif ;
  text-align: center;
 }
 
-Select.Option{align-items: center; }
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+.col-45 {
+  float: left;
+  width: 80%;
+  margin-top: 6px;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+label {
+  padding: 6px 6px 6px 0;
+  display: inline-block;
+}
+input{
+  width: 45%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.btn {
+  background-color: #1409b3de;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: left;
+}
+
+p {
+font-family:cursive;
+}
+
+.paginationClass {
+  display: inline-block;
+}
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}

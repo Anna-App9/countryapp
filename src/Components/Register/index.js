@@ -6,89 +6,96 @@ import { Select } from "antd";
 
 const Register = () => {
   const [country, setCountry] = useState([]);
-  const [usercountry,setuserCountry] = useState();
+  const [usercountry, setuserCountry] = useState();
+  const _ = require("lodash");
 
-    // ------------------ Load List of Countries ------------------
-    const url =
-    "https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/countries?f=pjson";
+  // ------------------ LOAD LIST OF COUNTRIES ------------------
+  const url ="https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/countries?f=pjson"
   useEffect(() => {
     axios.get(url).then((res) => {
       setCountry(res.data.countries);
-      console.log('countries',res.data.countries);
     });
   }, []);
-
-
+  
+  const navigate = useNavigate();
   const [email, setEmail] = useState();
-  const [username, setUsername] = useState();
+  const [displayname, setDisplayname] = useState();
   const [password, setPassword] = useState();
   const [cpassword, setCpassword] = useState();
-  const navigate = useNavigate();
-
+  
   const onChangeName = (e) => {
-    setUsername(e.target.value);
+    setDisplayname(e.target.value);
   };
   const onChangeEmail = (e) => {
     setEmail(e.target.value);
   };
-
   const onChangePassword = (e) => {
     setPassword(e.target.value);
   };
   const onChangeCpassword = (e) => {
     setCpassword(e.target.value);
   };
-
   const selectCountry = (e) => {
     setuserCountry(e);
-    console.log(e);
   };
 
+  //--------------- SUCCESS / ERROR MESSAGE ---------------
   const success = () => {
     message.success(
       "Congrats, your registration is successful. Please login now!"
     );
   };
-
-  //---------------REGISTRATION FORM SUBMIT HANDLER---------------
-
+  const error = () => {
+    message.error("Email Already taken, please try another email!");
+  };
+  
+  //--------------- REGISTRATION FORM SUBMIT HANDLER---------------
   const onSubmit = (e) => {
-    console.log(e);
-    let newData = {
-      username: e.username,
-      email: e.email,
-      country: usercountry,
-      password: e.password,
-      cpassword: e.cpassword,
-    };
-    console.log(newData);
-    let newUser = localStorage.getItem("users");
-    if (!newUser) {
-      localStorage.setItem("users", JSON.stringify([newData]));
-      success();
-      navigate("/login");
-    } else {
-      let userArr = JSON.parse(newUser);
-
-      userArr.map((arr) => {
-        userArr.push(newData);
-        localStorage.setItem("users", JSON.stringify(userArr));
-      });
-      success();
-      navigate("/login");
+    if (!usercountry) {
+      message.error("Please select a country");
+    }
+    if (usercountry) {
+      let newData = {
+        displayname: e.displayname,
+        email: e.email,
+        country: usercountry,
+        password: e.password,
+      };
+      let newUser = localStorage.getItem("users");
+      if (newUser === null) {
+        localStorage.setItem("users", JSON.stringify([newData]));
+        success();
+        navigate("/login");
+      } else {
+        let userArr = JSON.parse(newUser);
+        let dupUser = _.find(userArr, function(obj) {   //Check if email already taken
+          if (obj.email == e.email) {
+            return true;
+          }
+        });
+        if (!dupUser) {
+          userArr.push(newData);
+          localStorage.setItem("users", JSON.stringify(userArr));
+          success();
+          navigate("/login");
+        } else {
+          error();
+        }
+      }
     }
   };
 
-
-
   return (
-    <div>
-      <h3>
-        Do you have an account?
+    <div className="reg-body">
+      <h1 style={{ color: "#0b52bb"}}>
+                COUNTRY APP SIGN UP
+              </h1>
+      <h3>Do you have an account?
         <Link to={"/login"} className="nav-link">
           Login
         </Link>
       </h3>
+
       <Form
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 5 }}
@@ -99,9 +106,9 @@ const Register = () => {
         autoComplete="off"
       >
         <Form.Item
-          label="Username"
-          name="username"
-          value={username}
+          label="Display Name"
+          name="displayname"
+          value={displayname}
           onChange={onChangeName}
           rules={[
             {
@@ -111,13 +118,13 @@ const Register = () => {
             { whitespace: true },
             {
               pattern: /^[a-zA-Z0-9]+$/,
-              message: "Username should not contain any special characters.",
+              message: "Display Name should not contain any special characters.",
             },
-            { min: 3, message: "Username must contain min 3 characters" },
+            { min: 3, message: "Display Name must contain min 3 characters" },
           ]}
           hasFeedback
         >
-          <Input placeholder="Enter your Username" />
+          <Input placeholder="Enter your Display Name" />
         </Form.Item>
         <Form.Item
           label="Email"
@@ -138,17 +145,27 @@ const Register = () => {
         >
           <Input placeholder="Enter your Email" />
         </Form.Item>
-        <Form.Item>
+        <Form.Item 
+        label="Country"
+        name="country">
           <Select
             placeholder="Please select your country"
             onSelect={selectCountry}
+            rules={[{ required: true, message: "Please select your country" }]}
           >
-            {
-              country.map((country,index) => {
-                return (
-                <Select.Option key={index} value={country.name}>{country.name}</Select.Option>
-               );
-              })}
+            {country.map((country, index) => {
+              return (
+                <Select.Option
+                  rules={[
+                    { required: true, message: "Please select your country" },
+                  ]}
+                  key={index}
+                  value={country.name}
+                >
+                  {country.name}
+                </Select.Option>
+              );
+            })}
           </Select>
         </Form.Item>
         <Form.Item
@@ -161,9 +178,14 @@ const Register = () => {
               required: true,
               message: "Password is required",
             },
+            { whitespace: true },
             {
-              min: 6,
-              message: "Min 6 characters required",
+              pattern: /^[a-zA-Z0-9]+$/,
+              message: "Password should not contain any special characters.",
+            },
+            {
+              min: 4,
+              message: "Min 4 characters required",
             },
             {
               max: 15,
@@ -174,8 +196,6 @@ const Register = () => {
         >
           <Input.Password placeholder="Enter your Password" />
         </Form.Item>
-
-
 
         <Form.Item
           label="Confirm Password"
