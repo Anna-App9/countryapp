@@ -120,14 +120,15 @@ const Home = () => {
       currency: country.currencyName,
       continent: country.continent,
     };
-    // let oldFav = localStorage.getItem("FavItem");
-    // if (!oldFav) {
-    //   localStorage.setItem("FavItem", JSON.stringify([newFavItem]));
-    // } else {
-    //   let favArray = JSON.parse(oldFav);
-    //   favArray.push(newFavItem);
-    //   localStorage.setItem("FavItem", JSON.stringify(favArray));
-    // }
+
+    let oldFav = localStorage.getItem("FavItem");
+    if (!oldFav) {
+      localStorage.setItem("FavItem", JSON.stringify([newFavItem]));
+    } else {
+      let favArray = JSON.parse(oldFav);
+      favArray.push(newFavItem);
+      localStorage.setItem("FavItem", JSON.stringify(favArray));
+    }
   };
 
   return (
