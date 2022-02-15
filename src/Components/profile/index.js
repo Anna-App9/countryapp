@@ -106,7 +106,8 @@ const Profile = () => {
                 <input
                   type="text"
                   placeholder="Enter your Display Name"
-                  value={cuser.email}
+                  defaultValue={cuser.email}
+                  readOnly
                 />
               </div>
             </div>
@@ -118,7 +119,7 @@ const Profile = () => {
                 <input
                   type="text"
                   placeholder="Enter your Display Name"
-                  value={displayname}
+                  defaultValue={displayname}
                   onChange={(e) => setDisplayname(e.target.value)}
                 />
               </div>
@@ -132,7 +133,7 @@ const Profile = () => {
                   type="text"
                   name="password"
                   placeholder="Enter your password"
-                  value={password}
+                  defaultValue={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>

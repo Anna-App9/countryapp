@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import Head from "../header";
 import Section from "../section";
 import {
@@ -14,7 +14,11 @@ import {
 } from "antd";
 import axios from "axios";
 import _ from "lodash";
+
 const { Sider, Content } = Layout;
+
+export const FavContextcount = createContext(0);
+export const CountryList = createContext();
 
 const Home = () => {
   const [countries, setCountries] = useState([]);
@@ -63,6 +67,7 @@ const Home = () => {
         (c) => c.continent === activeContinent
       );
       setActiveCountries(activeCountriesData);
+      setCurrentPage(1);
       setpaginatedCountries(
         _(activeCountriesData)
           .slice(0)
@@ -80,7 +85,7 @@ const Home = () => {
     }
   };
 
-    //--------------- COUNTRY DETAILS MODAL ---------------
+  //--------------- COUNTRY DETAILS MODAL ---------------
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -90,7 +95,7 @@ const Home = () => {
     setIsModalVisible(true);
   };
 
-      //--------------- PAGINATION ---------------
+  //--------------- PAGINATION ---------------
 
   const pagination = (pageNo) => {
     setCurrentPage(pageNo);
@@ -106,134 +111,136 @@ const Home = () => {
     setpaginatedCountries(paginated);
   };
 
-    //--------------- ADD FAV COUNTRIES ---------------
+  //--------------- ADD FAV COUNTRIES ---------------
 
   const addFav = (country) => {
-    message.success("Your Fav Country is added")
+    message.success("Your Fav Country is added");
     let newFavItem = {
       name: country.altName,
       currency: country.currencyName,
       continent: country.continent,
     };
-    let oldFav = localStorage.getItem("FavItem");
-    if (!oldFav) {
-      localStorage.setItem("FavItem", JSON.stringify([newFavItem]));
-    } 
-    else {
-      let favArray = JSON.parse(oldFav);
-      favArray.push(newFavItem);
-      localStorage.setItem("FavItem", JSON.stringify(favArray));
-    }
+    // let oldFav = localStorage.getItem("FavItem");
+    // if (!oldFav) {
+    //   localStorage.setItem("FavItem", JSON.stringify([newFavItem]));
+    // } else {
+    //   let favArray = JSON.parse(oldFav);
+    //   favArray.push(newFavItem);
+    //   localStorage.setItem("FavItem", JSON.stringify(favArray));
+    // }
   };
 
   return (
     <div>
-      <Layout>
-        <Head/>
+      <CountryList.Provider value={countries}>
         <Layout>
-          <Sider width={200} className="site-layout-background">
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
-              style={{ height: "100%", borderRight: 0 }}
-            >
-              <Section
-                updateContinent={setActiveContinent}
-                countries={countries}
-              />
-            </Menu>
-          </Sider>
-          <Layout style={{ padding: "0 24px 24px" }}>
-            <h1 style={{ color: "#0b52bb", textDecoration: "underline" }}>
-              COUNTRIES
-            </h1>
-            <Content
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                margin: 0,
-                minHeight: 280,
-              }}
-            >
-              <div className="row">
-                <div style={{ background: "#ECECEC", padding: "30px" }}>
-                  <Row gutter={16}>
-                    {paginatedCountries?.map((country, index) => {
-                      return (
-                        <div key={index}>
-                          <Col span={12}>
-                            <Card
-                              title={country.altName}
-                              style={{ width: 440 }}
-                            >
-                              <p>Currency: {country.currencyName}</p>
-                              <p>Continent: {country.continent}</p>
-                              <Button
-                                type="primary"
-                                onClick={() => showModal(country)}
-                              >
-                                Read More
-                              </Button>
-                              <Button
-                                type="danger"
-                                onClick={() => addFav(country)}
-                              >
-                                Add Fav+
-                              </Button>
-                            </Card>
-                          </Col>
-                        </div>
-                      );
-                    })}
-                  </Row>
-
-                  <Modal
-                    title={showCountryData.altName}
-                    visible={isModalVisible}
-                    onOk={handleOk}
-                    okText="Done"
-                    closable={false}
-                    cancelButtonProps={{ style: { display: "none" } }}
-                  >
-                    <p>Continent: {showCountryData.continent}</p>
-                    <p>
-                      Currency: {showCountryData.currencyName} (
-                      {showCountryData.currencySymbol})
-                    </p>
-                    <p>Currency Format: {showCountryData.currencyFormat}</p>
-                    <p>Distance Unit: {showCountryData.distanceUnits}</p>
-                  </Modal>
-                </div>
-              </div> 
-
-              {activeContinent ?      
-
-              <Pagination
-                defaultCurrent={1}
-                defaultPageSize={pageSize} //default size of page
-                total={activeCountries.length} //total countries
-                onChange={pagination}
+          <Head />
+          <Layout>
+            <Sider width={200} className="site-layout-background">
+              <Menu
+                mode="inline"
+                defaultSelectedKeys={["1"]}
+                defaultOpenKeys={["sub1"]}
+                style={{ height: "100%", borderRight: 0 }}
               >
-                {pages.map(
-                  (page, index) =>
-                    index >= minIndex &&
-                    index < maxIndex && (
-                      <>
-                        <p>{page}</p>
-                      </>
-                    )
+                <Section
+                  updateContinent={setActiveContinent}
+                  countries={countries}
+                />
+              </Menu>
+            </Sider>
+            <Layout style={{ padding: "0 24px 24px" }}>
+              <h1 style={{ color: "#0b52bb", textDecoration: "underline" }}>
+                COUNTRIES
+              </h1>
+              <Content
+                className="site-layout-background"
+                style={{
+                  padding: 24,
+                  margin: 0,
+                  minHeight: 280,
+                }}
+              >
+                <div className="row">
+                  <div style={{ background: "#ECECEC", padding: "30px" }}>
+                    <Row gutter={16}>
+                      {paginatedCountries?.map((country, index) => {
+                        return (
+                          <div key={index}>
+                            <Col span={12}>
+                              <Card
+                                title={country.altName}
+                                style={{ width: 440 }}
+                              >
+                                <p>Currency: {country.currencyName}</p>
+                                <p>Continent: {country.continent}</p>
+                                <Button
+                                  type="primary"
+                                  onClick={() => showModal(country)}
+                                >
+                                  Read More
+                                </Button>
+                                <Button
+                                  type="danger"
+                                  onClick={() => addFav(country)}
+                                >
+                                  Add Fav+
+                                </Button>
+                              </Card>
+                            </Col>
+                          </div>
+                        );
+                      })}
+                    </Row>
+
+                    <Modal
+                      title={showCountryData.altName}
+                      visible={isModalVisible}
+                      onOk={handleOk}
+                      okText="Done"
+                      closable={false}
+                      cancelButtonProps={{ style: { display: "none" } }}
+                    >
+                      <p>Continent: {showCountryData.continent}</p>
+                      <p>
+                        Currency: {showCountryData.currencyName} (
+                        {showCountryData.currencySymbol})
+                      </p>
+                      <p>Currency Format: {showCountryData.currencyFormat}</p>
+                      <p>Distance Unit: {showCountryData.distanceUnits}</p>
+                    </Modal>
+                  </div>
+                </div>
+
+                {activeContinent ? (
+                  <Pagination
+                    current={currentPage}
+                    defaultCurrent={1}
+                    defaultPageSize={pageSize} //default size of page
+                    total={activeCountries.length} //total countries
+                    onChange={pagination}
+                  >
+                    {pages.map(
+                      (page, index) =>
+                        index >= minIndex &&
+                        index < maxIndex && (
+                          <>
+                            <p>{page}</p>
+                          </>
+                        )
+                    )}
+                  </Pagination>
+                ) : (
+                  <p>
+                    Please select your continents and enjoy reading about your
+                    countries with us!
+                  </p>
                 )}
-              </Pagination>
-
-              :
-              <p>Please select your continents and enjoy reading about your countries with us!</p>
-                    }
-
-            </Content>
+              </Content>
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
+      </CountryList.Provider>
     </div>
   );
 };

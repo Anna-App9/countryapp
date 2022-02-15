@@ -40,6 +40,7 @@ const Register = () => {
   };
 
   //--------------- SUCCESS / ERROR MESSAGE ---------------
+  
   const success = () => {
     message.success(
       "Congrats, your registration is successful. Please login now!"
@@ -50,6 +51,7 @@ const Register = () => {
   };
   
   //--------------- REGISTRATION FORM SUBMIT HANDLER---------------
+
   const onSubmit = (e) => {
     if (!usercountry) {
       message.error("Please select a country");

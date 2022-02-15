@@ -1,25 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useContext} from 'react';
 import { Layout, Menu, message, Badge } from "antd";
 import { useNavigate } from "react-router-dom";
+import { FavContextcount } from "../favourites"
 
 const { Header } =Layout;
 
 const Head = () => {
   const navigate = useNavigate();
   var currentUser = JSON.parse(localStorage.getItem('loggedUser'));
-  const [favCount,setFavCount] = useState();
+  const favouritesCount= useContext(FavContextcount);
+  console.log(favouritesCount);
 
       //----------------- LOAD FAVOURITE LIST -------------------
 
   useEffect(()=>{
     var favItems = JSON.parse(localStorage.getItem('FavItem'));
-    if(favItems){
-    var favlength = favItems.length;
-    setFavCount(favlength)
-    }
-    else{
-      setFavCount(0)
-    }
   },[])
 
     //----------------- SET NAVIGATION -------------------
@@ -53,6 +48,8 @@ const Head = () => {
 
 
   return <div>
+
+
             <Layout>
       <Header className="header">
         <div className="logo" />
@@ -64,20 +61,22 @@ const Head = () => {
             Home
           </Menu.Item>
           <Menu.Item key="2" onClick={favNav}>
-          <Badge count={favCount}>
-           <Menu.Item> Favourites</Menu.Item>
-            </Badge>
-          </Menu.Item>    
+              <Badge count={favouritesCount}>
+           <Menu.Item>Favourites
+          </Menu.Item>
+          </Badge>      
+          </Menu.Item> 
           <Menu.Item key="3" onClick={profileNav}>
             Profile
           </Menu.Item>
           <Menu.Item key="4" onClick={logout}>
             Logout
           </Menu.Item>
-       
         </Menu>
       </Header>
       </Layout>
+
+
   </div>
 };
 

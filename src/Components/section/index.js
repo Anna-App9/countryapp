@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Menu } from "antd";
+import { CountryList }from '../home'
 
 
-const Section = ({ updateContinent, countries }) => {
+const Section = ({ updateContinent }) => {
 const [continents, setContinents] = useState([]);
+const countries = useContext(CountryList);
+console.log(countries);
 
   //--------------- GET CONTINENTS LIST ---------------
 
@@ -12,7 +15,7 @@ const [continents, setContinents] = useState([]);
     let continentsList = Array.from(new Set(continentsData));  //remove duplicate continents
     continentsList.sort();                                      //arrange in order
     continentsList.unshift("All Continents");                   //add "All continents" to array
-    setContinents(continentsList);                              
+    setContinents(continentsList);   
     // updateContinent("All Continents");
   },[countries])
 

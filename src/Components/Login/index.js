@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import { Link,  useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 
@@ -30,7 +30,6 @@ const Login = () => {
  const onSubmit = (e) => {
   let userData = localStorage.getItem("users");
   let usersArray = JSON.parse(userData);
-
   let loggedUser = _.find(usersArray, function(obj) {  //Check if user exists
     if (obj.email == e.email && obj.password == e.password) {
         return true;
@@ -84,7 +83,7 @@ const Login = () => {
           >
             <Input placeholder="Enter your Email-ID" />
           </Form.Item>
-
+          
           <Form.Item
             label="Password"
             name="password"

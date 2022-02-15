@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import { Layout, message, Card, Col, Row, Button } from "antd";
 import Head from "../header";
 
+  //--------------- USECONTEXT FAVITEMS ---------------
+
+export const FavContextcount = createContext(0);
+
 const Favourites = () => {
   const [favouriteCountry, setFavouritecountry] = useState([]);
+  const [favCount, setFavCount] = useState(0);
+
 
   //--------------- GET FAVOURITES COUNT ---------------
 
@@ -15,6 +21,10 @@ const Favourites = () => {
     } else {
       setFavouritecountry("");
     }
+    let favCountryLength = favcountries.length;
+    setFavCount(favCountryLength);
+    console.log(favCountryLength);
+    
   }, []);
   console.log(favouriteCountry);
   const _ = require("lodash");
@@ -32,8 +42,10 @@ const Favourites = () => {
     setFavouritecountry(JSON.parse(removedFav));
     message.success("You Fav Country is removed!!");
   };
+  
   return (
     <>
+      <FavContextcount.Provider value={favCount}>
       <Layout>
         <Head />
         <h1 style={{ color: "#0b52bb", textDecoration: "underline" }}>
@@ -69,6 +81,8 @@ const Favourites = () => {
           }
         </div>
       </Layout>
+      </FavContextcount.Provider>
+
     </>
   );
 };
