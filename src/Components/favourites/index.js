@@ -15,6 +15,7 @@ const Favourites = () => {
 
   useEffect(() => {
     let favCountry = localStorage.getItem("FavItem");
+    if(favCountry){                                         //if Favitems is available
     let favcountries = JSON.parse(favCountry);
     if (favcountries) {
       setFavouritecountry(favcountries);
@@ -24,6 +25,9 @@ const Favourites = () => {
     let favCountryLength = favcountries.length;
     setFavCount(favCountryLength);
     console.log(favCountryLength);
+  }else{                                                 //if Favitems is empty, set favcount as 0
+    setFavCount(0);
+  }
     
   }, []);
   console.log(favouriteCountry);
@@ -49,7 +53,7 @@ const Favourites = () => {
       <Layout>
         <Head />
         <h1 style={{ color: "#0b52bb", textDecoration: "underline" }}>
-          Favourites
+          Favourite Countries
         </h1>
         <div style={{ background: "#ECECEC", padding: "30px" }}>
           {favouriteCountry.length > 0 ? (
